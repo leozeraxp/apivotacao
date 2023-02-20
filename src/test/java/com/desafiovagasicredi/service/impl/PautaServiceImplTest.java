@@ -22,6 +22,7 @@ import org.springframework.data.jpa.repository.support.QuerydslJpaRepository;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -321,5 +322,75 @@ public class PautaServiceImplTest {
         votos.add(OpcoesVoto.SIM);
 
         assertEquals(votos, pauta.getVotos());
+        assertEquals(2, pauta.getVotos().size());
+    }
+
+    @Test
+    public void deveVotarCorretamenteAoSerProximoAssociadoAVotar(){
+        Associado associadoSalvo = associadoRepository.save(Associado.builder().cpf("70365138029").senha("123").build());
+
+        List<Associado> associados = new ArrayList<Associado>(Arrays.asList(associadoSalvo));
+        List<OpcoesVoto> votos = new ArrayList<OpcoesVoto>(Arrays.asList(OpcoesVoto.SIM));
+        Pauta pauta = pautaRepository.save(Pauta.builder()
+                .tema("tema válido")
+                .votos(votos)
+                .associados(associados)
+                .inicioSessao(new Date(System.currentTimeMillis()))
+                .fimSessao(new Date(System.currentTimeMillis()+600000))
+                .build());
+
+        Associado associado = associadoRepository.save(Associado.builder().cpf("89402874011").build());
+        Integer idPauta = pauta.getId();
+        OpcoesVoto voto = OpcoesVoto.SIM;
+
+        pautaService.votarPauta(associado,pauta.getId(),OpcoesVoto.SIM);
+        pauta = pautaRepository.findById(pauta.getId()).get();
+        votos.add(OpcoesVoto.SIM);
+        associados.add(associado);
+
+        assertEquals(votos, pauta.getVotos());
+        assertEquals(2, pauta.getVotos().size());
+        assertEquals(associados, pauta.getAssociados());
+    }
+
+    @Test
+    public void deveRetornarErroAoRetornarResultadoDeVotacaoComPautaDeIdInexistente(){
+        Throwable throwable = Assertions.catchThrowable(() -> pautaService.retornarResultadoVotacaoPauta(0));
+        Assertions.assertThat(throwable)
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("Não foi encontrado nenhuma pauta com este ID");
+    }
+
+    @Test
+    public void deveRetornarErroAoRetornarResultadoDeVotacaoComPautaDeSessaoNaoFinalizada(){
+        Pauta pauta = pautaRepository.save(Pauta.builder()
+                .inicioSessao(new Date(System.currentTimeMillis()))
+                .fimSessao(new Date(System.currentTimeMillis()+60000))
+                .build());
+
+        Throwable throwable = Assertions.catchThrowable(() -> pautaService.retornarResultadoVotacaoPauta(pauta.getId()));
+        Assertions.assertThat(throwable)
+                .isInstanceOf(RegraNegocioException.class)
+                .hasMessage("Sessão ainda não foi finalizada!");
+    }
+
+    @Test
+    public void deveRetornarOResultadoDeVotacao(){
+        List<OpcoesVoto> votos = new ArrayList<OpcoesVoto>(Arrays.asList(
+           OpcoesVoto.SIM,OpcoesVoto.SIM, OpcoesVoto.SIM,OpcoesVoto.SIM,OpcoesVoto.SIM,OpcoesVoto.SIM,
+           OpcoesVoto.NAO,OpcoesVoto.NAO,OpcoesVoto.NAO,OpcoesVoto.NAO
+        ));
+
+        Pauta pauta = pautaRepository.save(Pauta.builder()
+                .fimSessao(new Date(System.currentTimeMillis()))
+                .votos(votos)
+                .build());
+
+        Integer sim = Collections.frequency(votos, OpcoesVoto.SIM);
+        Integer nao = Collections.frequency(votos, OpcoesVoto.NAO);
+        Integer total = votos.size();
+
+        String result = pautaService.retornarResultadoVotacaoPauta(pauta.getId());
+        assertEquals("SIM: "+sim+"("+sim*(100/total)+"%) \r\n NAO:"+nao+" ("+nao*(100/total)+"%)",result);
     }
 }
