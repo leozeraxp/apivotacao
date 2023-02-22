@@ -375,6 +375,16 @@ public class PautaServiceImplTest {
     }
 
     @Test
+    public void deveRetornarQueASessaoNaoTeveVotosAoEstarVazio(){
+        Pauta pauta = pautaRepository.save(Pauta.builder()
+                .fimSessao(new Date(System.currentTimeMillis()))
+                .build());
+
+        String result = pautaService.retornarResultadoVotacaoPauta(pauta.getId());
+        assertEquals("Está pauta não teve nenhum voto durante sua sessão!",result);
+    }
+
+    @Test
     public void deveRetornarOResultadoDeVotacao(){
         List<OpcoesVoto> votos = new ArrayList<OpcoesVoto>(Arrays.asList(
            OpcoesVoto.SIM,OpcoesVoto.SIM, OpcoesVoto.SIM,OpcoesVoto.SIM,OpcoesVoto.SIM,OpcoesVoto.SIM,

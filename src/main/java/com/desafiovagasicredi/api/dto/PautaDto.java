@@ -1,13 +1,13 @@
 package com.desafiovagasicredi.api.dto;
 
 import com.desafiovagasicredi.model.entity.Associado;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PautaDto {
 
     private String tema;

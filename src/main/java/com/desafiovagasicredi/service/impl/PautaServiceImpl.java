@@ -113,6 +113,11 @@ public class PautaServiceImpl implements PautaService {
             throw new RegraNegocioException("Sessão ainda não foi finalizada!");
         }
 
+        if(Objects.isNull(pauta.getVotos()) || pauta.getVotos().isEmpty()){
+            return "Está pauta não teve nenhum voto durante sua sessão!";
+        }
+
+
         Integer sim = Collections.frequency(pauta.getVotos(), OpcoesVoto.SIM);
         Integer nao = Collections.frequency(pauta.getVotos(), OpcoesVoto.NAO);
         Integer total = pauta.getVotos().size();

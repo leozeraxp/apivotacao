@@ -1,7 +1,9 @@
 package com.desafiovagasicredi.api.controller;
 
 import com.desafiovagasicredi.api.dto.AssociadoDto;
+import com.desafiovagasicredi.api.dto.IniciarVotacaoDto;
 import com.desafiovagasicredi.api.dto.PautaDto;
+import com.desafiovagasicredi.api.dto.VotarDto;
 import com.desafiovagasicredi.exceptions.RegraNegocioException;
 import com.desafiovagasicredi.model.entity.Associado;
 import com.desafiovagasicredi.model.entity.Pauta;
@@ -24,7 +26,7 @@ public class PautaController {
     @Autowired
     private JwtGenerator jwtGenerator;
 
-    @PostMapping
+    @PostMapping("salvar")
     public ResponseEntity<Object> salvar(@RequestBody PautaDto dto, Authentication authentication){
         try{
             String cpf = authentication.getName();
@@ -37,14 +39,14 @@ public class PautaController {
 
 
             return new ResponseEntity<Object>(pauta, HttpStatus.CREATED);
-        }catch (RuntimeException e){
+        }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @PatchMapping("/{id}/iniciar")
     public ResponseEntity<Object> iniciarVotacao(@PathVariable Integer id,
-                                                 @RequestParam(required = false) Integer duracao,
+                                                 @RequestBody(required = false)IniciarVotacaoDto dto,
                                                  Authentication authentication){
         try {
             String cpf = authentication.getName();
@@ -52,7 +54,7 @@ public class PautaController {
                     .cpf(cpf)
                     .build();
 
-            service.iniciarVotacaoPauta(id,associado, duracao);
+            service.iniciarVotacaoPauta(id,associado, dto.getDuracao());
 
             return ResponseEntity.ok().body("Votação iniciada!");
         }catch (RuntimeException e){
@@ -62,7 +64,7 @@ public class PautaController {
 
     @PostMapping("/{id}/votar")
     public ResponseEntity<Object> votar(@PathVariable Integer id,
-                                        @RequestParam(required = false) OpcoesVoto voto,
+                                        @RequestBody VotarDto votar,
                                         Authentication authentication){
 
         String cpf = authentication.getName();
@@ -71,7 +73,7 @@ public class PautaController {
                 .build();
 
         try {
-            service.votarPauta(associado,id,voto);
+            service.votarPauta(associado,id,votar.getVoto());
             return ResponseEntity.ok().body("Voto computado!");
 
         }catch (RuntimeException e){
