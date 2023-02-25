@@ -15,15 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/associado/")
+@RequestMapping("/api/associados/")
 public class AssociadoController {
     @Autowired
     private AssociadoService service;
 
     @PostMapping
     public ResponseEntity<Object> salvar(@RequestBody AssociadoDto dto){
-
-        try {
             Associado associado = Associado.builder()
                                             .nome(dto.getNome())
                                             .cpf(dto.getCpf())
@@ -32,9 +30,6 @@ public class AssociadoController {
 
             service.salvar(associado, dto.getConfirmarSenha());
             return new ResponseEntity<Object>(associado, HttpStatus.CREATED);
-        }catch (RegraNegocioException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
     }
 
     @PostMapping("login")

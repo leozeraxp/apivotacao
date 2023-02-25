@@ -8,7 +8,6 @@ import com.desafiovagasicredi.exceptions.RegraNegocioException;
 import com.desafiovagasicredi.model.entity.Associado;
 import com.desafiovagasicredi.model.entity.Pauta;
 import com.desafiovagasicredi.model.entity.enums.OpcoesVoto;
-import com.desafiovagasicredi.security.JwtGenerator;
 import com.desafiovagasicredi.service.PautaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,78 +16,51 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/pauta/")
+@RequestMapping("/api/pautas/")
 public class PautaController {
 
     @Autowired
     private PautaService service;
 
-    @Autowired
-    private JwtGenerator jwtGenerator;
-
-    @PostMapping("salvar")
-    public ResponseEntity<Object> salvar(@RequestBody PautaDto dto, Authentication authentication){
-        try{
-            String cpf = authentication.getName();
+    @PostMapping
+    public ResponseEntity<Object> salvar(@RequestBody PautaDto dto){
             Pauta pauta = Pauta.builder()
                     .tema(dto.getTema())
-                    .criador(Associado.builder().cpf(cpf).build())
+                    .criador(Associado.builder().cpf(dto.getCpf()).build())
                     .build();
 
             service.salvar(pauta);
 
-
             return new ResponseEntity<Object>(pauta, HttpStatus.CREATED);
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
     }
 
     @PatchMapping("/{id}/iniciar")
-    public ResponseEntity<Object> iniciarVotacao(@PathVariable Integer id,
-                                                 @RequestBody(required = false)IniciarVotacaoDto dto,
-                                                 Authentication authentication){
-        try {
-            String cpf = authentication.getName();
-            Associado associado = Associado.builder()
-                    .cpf(cpf)
-                    .build();
+    public ResponseEntity<String> iniciarVotacao(@PathVariable Integer id,
+                                                 @RequestBody(required = false) IniciarVotacaoDto dto ) {
+        Associado associado = Associado.builder()
+                .cpf(dto.getCpf())
+                .build();
 
-            service.iniciarVotacaoPauta(id,associado, dto.getDuracao());
+        service.iniciarVotacaoPauta(id, associado, dto.getDuracao());
 
-            return ResponseEntity.ok().body("Votação iniciada!");
-        }catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return new ResponseEntity<String>("Votação Iniciada", HttpStatus.OK);
     }
 
     @PostMapping("/{id}/votar")
-    public ResponseEntity<Object> votar(@PathVariable Integer id,
-                                        @RequestBody VotarDto votar,
-                                        Authentication authentication){
+    public ResponseEntity<String> votar(@PathVariable Integer id,
+                                        @RequestBody VotarDto votar){
 
-        String cpf = authentication.getName();
         Associado associado = Associado.builder()
-                .cpf(cpf)
+                .cpf(votar.getCpf())
                 .build();
 
-        try {
             service.votarPauta(associado,id,votar.getVoto());
-            return ResponseEntity.ok().body("Voto computado!");
-
-        }catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return new ResponseEntity<String>("Votação computado!", HttpStatus.OK);
     }
 
     @GetMapping("/{id}/resultado")
-    public ResponseEntity<Object> resultado(@PathVariable("id") Integer id){
-        try {
+    public ResponseEntity<String> resultado(@PathVariable("id") Integer id){
             String resultado = service.retornarResultadoVotacaoPauta(id);
-            return new ResponseEntity<>(resultado, HttpStatus.FOUND);
-
-        }catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+            return new ResponseEntity<>(resultado, HttpStatus.OK);
     }
 }

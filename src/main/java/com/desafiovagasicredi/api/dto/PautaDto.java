@@ -12,4 +12,6 @@ public class PautaDto {
 
     private String tema;
 
+    private String cpf;
+
 }

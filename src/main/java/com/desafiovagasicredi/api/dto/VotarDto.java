@@ -13,4 +13,6 @@ import lombok.Setter;
 public class VotarDto {
 
     private OpcoesVoto voto;
+
+    private String cpf;
 }

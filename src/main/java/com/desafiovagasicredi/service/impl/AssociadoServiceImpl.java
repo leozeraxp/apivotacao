@@ -26,16 +26,11 @@ public class AssociadoServiceImpl implements AssociadoService {
 
     private PasswordEncoder passwordEncoder;
 
-    private AuthenticationManager authenticationManager;
-
-    private JwtGenerator jwtGenerator;
 
     @Autowired
-    public AssociadoServiceImpl(AssociadoRepository repository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtGenerator jwtGenerator) {
+    public AssociadoServiceImpl(AssociadoRepository repository, PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-        this.jwtGenerator = jwtGenerator;
     }
 
     @Override
@@ -49,7 +44,7 @@ public class AssociadoServiceImpl implements AssociadoService {
 
     @Override
     public String login(String username, String password) {
-        try{
+        /*try{
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password));
 
@@ -58,8 +53,8 @@ public class AssociadoServiceImpl implements AssociadoService {
             return jwtGenerator.generateToken(authentication);
         }catch (Exception e){
             throw e;
-        }
-
+        }*/
+        return "Desativado!";
     }
 
     private void validar(Associado associado, String confirmarSenha) {
