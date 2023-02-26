@@ -1,12 +1,33 @@
+# Desafio Sicredi
+
 Olá, este projeto de trata de um Desafio da Sicredi para fazer um sistema de votação para os associados!
 
-#Do que eu preciso para testar
+## Guia de Instalação para testes
+
+<b>O que é necessário para começar</b>
 - MySQL
 - JDK 17 ou superior
 - JRE 1.8.0 ou superior
 - IDE Java (Intellij, Eclipse ou outros)
 - Framework pra teste de API (Insomnia ou Postman)
 - Lombok
+- Git
+
+<b>Para testar o projeto</b>
+- Realize a instalação de todos os Requisitos
+- Baixe o projeto direto do Github
+- Abra este projeto em um Editor de Código para Java como o Intellij ou o Eclipse
+- Configure o arquivo encontrado em main/java/resources chamado application.properties, altere o url, username e senha para de acordo com seu Banco de Dados MySQL
+
+```
+spring.datasource.url = jdbc:mysql://localhost:3307/seubanco
+spring.datasource.username = seuusername
+spring.datasource.password = suasenha
+spring.datasource.driver-class-name = com.mysql.cj.jdbc.Driver
+spring.jpa.hibernate.ddl-auto = update
+
+```
+
 
 #Como utilizar
 Todas as páginas precisam de autenticação para utilizar com excessão do cadastro de associado e login.
