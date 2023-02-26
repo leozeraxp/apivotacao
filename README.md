@@ -74,7 +74,7 @@ Execute o arquivo com o método main com o nome de DesafiovagasicrediApplication
 
 |  *HEADER* | *FORMATO* |
 | ------------- | ------------- |
-| URI  | http://localhost:8080/api/pauta/{id}/votar |
+| URI  | http://localhost:8080/api/pautas/{id}/votar |
 | METODO  | POST |
 
 | *BODY* | *FORMATO*  |
@@ -86,7 +86,7 @@ Execute o arquivo com o método main com o nome de DesafiovagasicrediApplication
 
 |  *HEADER* | *FORMATO* |
 | ------------- | ------------- |
-| URI  | http://localhost:8080/api/pauta/{id}/resultado |
+| URI  | http://localhost:8080/api/pautas/{id}/resultado |
 | METODO  | GET |
 <br>
 
