@@ -380,8 +380,11 @@ public class PautaServiceImplTest {
                 .fimSessao(new Date(System.currentTimeMillis()))
                 .build());
 
-        String result = pautaService.retornarResultadoVotacaoPauta(pauta.getId());
-        assertEquals("Está pauta não teve nenhum voto durante sua sessão!",result);
+
+        Throwable throwable = Assertions.catchThrowable(() -> pautaService.retornarResultadoVotacaoPauta(pauta.getId()));
+        Assertions.assertThat(throwable)
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("Esta pauta não teve nenhum voto durante sua sessão!");
     }
 
     @Test
@@ -400,7 +403,9 @@ public class PautaServiceImplTest {
         Integer nao = Collections.frequency(votos, OpcoesVoto.NAO);
         Integer total = votos.size();
 
-        String result = pautaService.retornarResultadoVotacaoPauta(pauta.getId());
-        assertEquals("SIM: "+sim+"("+sim*(100/total)+"%) \r\n NAO:"+nao+" ("+nao*(100/total)+"%)",result);
+        Map<String, Integer> result = pautaService.retornarResultadoVotacaoPauta(pauta.getId());
+        assertEquals(sim, result.get("sim"));
+        assertEquals(nao,result.get("nao"));
+        assertEquals(total,result.get("total"));
     }
 }

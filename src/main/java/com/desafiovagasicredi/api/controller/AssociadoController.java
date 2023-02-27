@@ -31,15 +31,4 @@ public class AssociadoController {
             service.salvar(associado, dto.getConfirmarSenha());
             return new ResponseEntity<Object>(associado, HttpStatus.CREATED);
     }
-
-    @PostMapping("login")
-    public ResponseEntity<Object> login(@RequestBody LoginDto loginDto){
-        try{
-            String token = service.login(loginDto.getUsername(), loginDto.getPassword());
-            return new ResponseEntity<>(new AuthResponseDTO(token), HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
-        }
-
-    }
 }

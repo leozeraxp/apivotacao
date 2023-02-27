@@ -105,7 +105,7 @@ public class PautaServiceImpl implements PautaService {
     }
 
     @Override
-    public String retornarResultadoVotacaoPauta(Integer idPauta) {
+    public Map<String, Integer> retornarResultadoVotacaoPauta(Integer idPauta) {
         Pauta pauta = repository.findById(idPauta).orElseThrow(
                 () -> new NotFoundException("Não foi encontrado nenhuma pauta com este ID"));
 
@@ -114,7 +114,7 @@ public class PautaServiceImpl implements PautaService {
         }
 
         if(Objects.isNull(pauta.getVotos()) || pauta.getVotos().isEmpty()){
-            return "Está pauta não teve nenhum voto durante sua sessão!";
+            throw new NotFoundException("Esta pauta não teve nenhum voto durante sua sessão!");
         }
 
 
@@ -122,8 +122,13 @@ public class PautaServiceImpl implements PautaService {
         Integer nao = Collections.frequency(pauta.getVotos(), OpcoesVoto.NAO);
         Integer total = pauta.getVotos().size();
 
+        Map<String, Integer> resultado = new HashMap<String,Integer>();
+        resultado.put("sim",sim);
+        resultado.put("nao",nao);
+        resultado.put("total",total);
 
-        return "SIM: "+sim+"("+sim*(100/total)+"%) \r\n NAO:"+nao+" ("+nao*(100/total)+"%)";
+
+        return resultado;
     }
 
     private void validar(Pauta pauta) {
