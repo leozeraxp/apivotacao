@@ -30,6 +30,8 @@ spring.jpa.hibernate.ddl-auto = update
 
 
 ## Como utilizar
+
+### API
 Execute o arquivo com o método main com o nome de DesafiovagasicrediApplication, e então utilize um framework para testes de API para acessar os seguintes URIs disponíveis. (http://localhost:8080 deverá ser alterado caso utilize outra porta padrão para executar o servidor em sua máquina);
 <br>
 - Para cadastrar um associado
@@ -89,4 +91,8 @@ Execute o arquivo com o método main com o nome de DesafiovagasicrediApplication
 | URI  | http://localhost:8080/api/pautas/{id}/resultado |
 | METODO  | GET |
 <br>
+
+### TESTES
+
+Os métodos de testes se encontram em <b>desafiovagasicredi/src/tests</b> contando atualmente com os testes para o método da classe <b>PautaServiceImpl</b>. É possível executar a classe de teste ou executar apenas 1 método.
 
